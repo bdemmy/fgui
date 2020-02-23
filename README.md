@@ -4,7 +4,7 @@
 
 <p align="center">
     <a href="https://en.wikipedia.org/wiki/C%2B%2B"><img src="https://img.shields.io/badge/language-C++-red?style=for-the-badge" alt="c++"></a>
-      <a href="https://github.com/otvv/fgui/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellowgreen?style=for-the-badge" alt="mit"></a>
+      <a href="https://github.com/otvv/fgui/blob/legacy/LICENSE"><img src="https://img.shields.io/badge/license-MIT-yellowgreen?style=for-the-badge" alt="mit"></a>
 </p>
 
 <p align="center"> 
@@ -25,9 +25,9 @@ _You can visit the [wiki (currently under construction)](https://github.com/otvv
 ***
 
 Here is a preview of the default window design:
-![img](https://raw.githubusercontent.com/otvv/fgui/master/resources/menu_example_1.png)
+![img](https://raw.githubusercontent.com/otvv/fgui/legacy/resources/menu_example_1.png)
 
-The framework is very customizable. You can click [here](https://github.com/otvv/fgui/tree/master/resources) for more examples.
+The framework is very customizable. You can click [here](https://github.com/otvv/fgui/tree/legacy/resources) for more examples.
 
 If you find any bugs, glitches or if you have a feature request or you just want to give feedback, you can go on the issues tab. 
 If you want to contribute, feel free to make a pull request.
