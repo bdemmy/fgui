@@ -11,6 +11,9 @@
 // library includes
 #include "widgets.hpp"
 
+// Theme header
+#include "theme.h"
+
 namespace FGUI
 {
   class CCheckBox : public FGUI::CWidgets
@@ -50,8 +53,24 @@ namespace FGUI
     // @brief: handle widget tooltips
     void Tooltip() override;
 
+  	// Binding widget to data
+  	void Bind(WIDGET_BIND_TYPE type, void* data) {
+        switch (type) {
+        case WIDGET_BIND_TYPE::BOOL:
+            m_eBindType = type;
+            m_bBoundData = data;
+            break;
+        	
+        default:
+            m_eBindType = WIDGET_BIND_TYPE::NONE;
+            break;
+        }
+  	}
+
   private:
     bool m_bIsChecked;
+    WIDGET_BIND_TYPE m_eBindType;
+    void* m_bBoundData;
     std::function<void()> m_fnctCallback;
   };
 } // namespace FGUI

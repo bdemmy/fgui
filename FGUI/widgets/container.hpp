@@ -11,116 +11,182 @@
 
 // library includes
 #include "widgets.hpp"
+#include "theme.h"
 
 namespace FGUI
 {
-  using CURSOR_STYLE = enum struct ESCursorStyle : int {
-    NONE = 0,
-    ARROW,
-    HAND,
-    IBEAM,
-    PIPETTE,
-    MOVE
-  };
+	// Window Settings
+	constexpr auto TITLE_HEIGHT = 20;
+	constexpr auto RAINBOW_SIZE = 2;
+	constexpr auto INNER_PAD = 14;
+	
+	// Rainbow Settings
+	constexpr float rainbowSpeed = 0.001;
+	static float staticHue = 0;
 
-  class CContainer : public FGUI::CWidgets
-  {
-  public:
-    CContainer();
+	using CURSOR_STYLE = enum struct ESCursorStyle : int {
+		NONE = 0,
+		ARROW,
+		HAND,
+		IBEAM,
+		PIPETTE,
+		MOVE
+	};
 
-    // @brief: handle container rendering
-    void Render();
+	class CContainer : public FGUI::CWidgets
+	{
+	public:
+		CContainer();
 
-    // @brief: save container state into a file
-    // @args: std::string file = file name/path
-    void SaveToFile(std::string file);
+		// @brief: handle container rendering
+		void Render();
 
-    // @brief: load container state from a file
-    // @args: std::string file = file name/path
-    void LoadFromFile(std::string file);
+		// @brief: save container state into a file
+		// @args: std::string file = file name/path
+		void SaveToFile(std::string file);
 
-    // @brief: toggles on or off the container
-    // @args: bool state = container state (on/off)
-    void SetState(bool state);
+		// @brief: load container state from a file
+		// @args: std::string file = file name/path
+		void LoadFromFile(std::string file);
 
-    // @brief: gets the state of the container
-    bool GetState();
+		// @brief: toggles on or off the container
+		// @args: bool state = container state (on/off)
+		void SetState(bool state);
 
-    // @brief: enables/disables groupbox scrollbar
-    // @args: bool state = scrollbar state (on/off)
-    void SetScrollBarState(bool state);
+		// @brief: gets the state of the container
+		bool GetState();
 
-    // @brief: gets the state of the scrollbar (if it's enabled or not)
-    bool GetScrollBarState();
+		// @brief: enables/disables groupbox scrollbar
+		// @args: bool state = scrollbar state (on/off)
+		void SetScrollBarState(bool state);
 
-    // @brief: get the widget scroll offset (amount of sorts)
-    int GetScrollOffset();
+		// @brief: gets the state of the scrollbar (if it's enabled or not)
+		bool GetScrollBarState();
 
-    // @brief: focus on a widget
-    // @args: std::shared_ptr<FGUI::CWidgets> widget = widget to focus
-    void SetFocusedWidget(std::shared_ptr<FGUI::CWidgets> widget);
+		// @brief: get the widget scroll offset (amount of sorts)
+		int GetScrollOffset();
 
-    // @brief: returns the widget being focused
-    std::shared_ptr<FGUI::CWidgets> GetFocusedWidget();
+		std::vector<std::shared_ptr<FGUI::CWidgets>>& GetWidgets() {
+			return m_prgpWidgets;
+		}
 
-    // @brief: adds a function callback for the container (it will call the function when the container is visible)
-    // @args: std::function<void()> callback = function instance
-    void AddCallback(std::function<void()> callback);
+		// @brief: focus on a widget
+		// @args: std::shared_ptr<FGUI::CWidgets> widget = widget to focus
+		void SetFocusedWidget(std::shared_ptr<FGUI::CWidgets> widget);
 
-    // @brief: sets a custom key to toggle on/off the container, this only works for the main container (window)
-    // @args: unsigned int key = toggle key
-    void SetKey(unsigned int key);
+		// @brief: returns the widget being focused
+		std::shared_ptr<FGUI::CWidgets> GetFocusedWidget();
 
-    // @brief: get the current toggle key of the container
-    unsigned int GetKey();
+		// @brief: adds a function callback for the container (it will call the function when the container is visible)
+		// @args: std::function<void()> callback = function instance
+		void AddCallback(std::function<void()> callback);
 
-    // @brief: add a new widget inside the groupbox
-    // @args: std::shared_ptr<FGUI::CWidgets> widget = widget
-    // bool padding = enable/disable padding
-    void AddWidget(std::shared_ptr<FGUI::CWidgets> widget, bool padding);
+		// @brief: sets a custom key to toggle on/off the container, this only works for the main container (window)
+		// @args: unsigned int key = toggle key
+		void SetKey(unsigned int key);
 
-    // @brief: sets the current Cursor style
-    // @args: FGUI::CURSOR_STYLE cursor = cursor style
-    void SetCursor(FGUI::CURSOR_STYLE cursor);
+		// @brief: get the current toggle key of the container
+		unsigned int GetKey();
 
-    // @brief: populate widget geometry (draw widget)
-    // @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
-    void Geometry(FGUI::WIDGET_STATUS status) override;
+		// @brief: add a new widget inside the groupbox
+		// @args: std::shared_ptr<FGUI::CWidgets> widget = widget
+		// bool padding = enable/disable padding
+		void AddWidget(std::shared_ptr<FGUI::CWidgets> widget, bool padding);
 
-    // @brief: handle update operations on the widget
-    void Update() override;
+		void RemoveWidgets() {
+			for (const auto& widget : m_prgpWidgets) {
+				if (widget->GetType() == (int)(WIDGET_TYPE::CONTAINER)) {
+					std::reinterpret_pointer_cast<FGUI::CContainer>(widget)->RemoveWidgets();
+				}
+			}
 
-    // @brief: handle input inside the widget
-    void Input() override;
+			m_prgpWidgets.clear();
+		}
 
-    // @brief: save the widget state
-    // @args: nlohmann::json module = json module
-    void Save(nlohmann::json& module) override;
+		// @brief: sets the current Cursor style
+		// @args: FGUI::CURSOR_STYLE cursor = cursor style
+		void SetCursor(FGUI::CURSOR_STYLE cursor);
 
-    // @brief: load the widget state
-    // @args: nlohmann::json module = json module
-    void Load(nlohmann::json& module) override;
+		// @brief: populate widget geometry (draw widget)
+		// @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
+		void Geometry(FGUI::WIDGET_STATUS status) override;
 
-    // @brief: handle widget tooltips
-    void Tooltip() override;
+		// @brief: handle update operations on the widget
+		void Update() override;
 
-  protected:
+		// @brief: handle input inside the widget
+		void Input() override;
 
-    // @brief: handle dynamic Cursors drawing
-    void Cursor();
+		// @brief: save the widget state
+		// @args: nlohmann::json module = json module
+		void Save(nlohmann::json& module) override;
 
-  private:
-    bool m_bIsOpened;
-    std::string m_strConfigName;
-    int m_nCursorStyle;
-    bool m_bScrollBarState;
-    unsigned int m_uiKey;
-    std::shared_ptr<FGUI::CWidgets> m_pFocusedWidget;
-    bool m_bIsFocusingOnWidget;
-    int m_iWidgetScrollOffset;
-    std::vector<std::shared_ptr<FGUI::CWidgets>> m_prgpWidgets;
-    std::function<void()> m_fnctCallback;
-  };
+		// @brief: load the widget state
+		// @args: nlohmann::json module = json module
+		void Load(nlohmann::json& module) override;
+
+		// @brief: handle widget tooltips
+		void Tooltip() override;
+
+		void SetBorder(bool border);
+
+		void SetDraggable(bool);
+
+		// Get the optimal content area for the container
+		// Used to more easily size inner components
+		FGUI::AREA GetContentArea(bool withPad = true) const {
+			if (!m_pParentWidget) {
+				if (withPad) return {
+					1 + INNER_PAD,
+					RAINBOW_SIZE + TITLE_HEIGHT + INNER_PAD,
+					m_dmSize.m_iWidth - 2 - (2 * INNER_PAD),
+					m_dmSize.m_iHeight - (RAINBOW_SIZE + TITLE_HEIGHT) - (2 * INNER_PAD) - 1
+				};
+
+				return {
+					1,
+					RAINBOW_SIZE + TITLE_HEIGHT,
+					m_dmSize.m_iWidth - 2,
+					m_dmSize.m_iHeight - (RAINBOW_SIZE + TITLE_HEIGHT) - 1
+				};
+			}
+
+			else {
+				if (withPad) return {
+					INNER_PAD,
+					INNER_PAD,
+					m_dmSize.m_iWidth - (2 * INNER_PAD),
+					m_dmSize.m_iHeight - (2 * INNER_PAD)
+				};
+
+				return {
+					0,
+					0,
+					m_dmSize.m_iWidth,
+					m_dmSize.m_iHeight
+				};
+			}
+		}
+
+	protected:
+
+		// @brief: handle dynamic Cursors drawing
+		void Cursor();
+
+	private:
+		bool m_draggable{ true };
+		bool m_bIsOpened;
+		std::string m_strConfigName;
+		int m_nCursorStyle;
+		bool m_bScrollBarState;
+		bool m_bDrawBorder;
+		unsigned int m_uiKey;
+		std::shared_ptr<FGUI::CWidgets> m_pFocusedWidget;
+		bool m_bIsFocusingOnWidget;
+		int m_iWidgetScrollOffset;
+		std::vector<std::shared_ptr<FGUI::CWidgets>> m_prgpWidgets;
+		std::function<void()> m_fnctCallback;
+	};
 
 } // namespace FGUI
 

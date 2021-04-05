@@ -5,7 +5,8 @@
 #pragma once
 
 #define FGUI_IMPLEMENTATION
-#include <FGUI/FGUI.hpp>
+#include "../../FGUI/FGUI.hpp"
+#include <atlstr.h>
 
 // NOTE: make sure to tell FGUI to use D3D9:
 // go to: https://github.com/otvv/fgui/wiki/First-Steps#renderer-helpers for more info.
@@ -13,11 +14,75 @@
 namespace FGUI_D3D9
 {
 	// NOTE: you still need to initialize the device.
-	inline IDirect3DDevice9Ex* m_pDevice;
+	inline IDirect3DDevice9* m_pDevice;
+	inline IDirect3DTexture9* ppTexture;
+
+	inline void InitHandicapIcon() {
+		const auto result = D3DXCreateTextureFromFileA(m_pDevice, "C:\\Users\\bdemm\\Desktop\\blackicon.jpg", &ppTexture);
+
+		assert(result == D3D_OK);
+	}
+
+	inline void RenderHandicapIcon(int _x, int _y, int _width, int _height) {
+		IDirect3DBaseTexture9* orig;
+		m_pDevice->GetTexture(0, &orig);
+		
+		if (m_pDevice->SetTexture(0, ppTexture) == D3D_OK) {
+			m_pDevice->SetRenderState(D3DRS_ZENABLE, false);
+			
+			DWORD state1, state2, state3;
+			m_pDevice->GetRenderState(D3DRS_ALPHABLENDENABLE, &state1);
+			m_pDevice->GetRenderState(D3DRS_SRCBLEND, &state2);
+			m_pDevice->GetRenderState(D3DRS_DESTBLEND, &state3);
+			
+			m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+			
+			DWORD stage1, stage2, stage3;
+			m_pDevice->GetTextureStageState(0, D3DTSS_COLOROP, &stage1);
+			m_pDevice->GetTextureStageState(0, D3DTSS_COLORARG1, &stage2);
+			m_pDevice->GetTextureStageState(0, D3DTSS_COLORARG2, &stage3);
+			
+			m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+			m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+			m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+			//d3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_ANISOTROPIC);
+			m_pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+			m_pDevice->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, 16);
+			
+			DWORD fvf;
+			m_pDevice->GetFVF(&fvf);
+
+			const float vertices[4][6] =
+			{
+				{_x, _y + _height, 0.f, 1.f, 0.0, 1.0 },
+				{_x, _y, 0.f, 1.f, 0.0, 0.0},
+				{_x + _width, _y + _height, 0.f, 1.f, 1.0, 1.0},
+				{_x + _width, _y, 0.f, 1.f, 1.0, 0.0},
+			};
+			
+			m_pDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX1);
+			m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(float) * 6);
+
+			m_pDevice->SetFVF(fvf);
+			m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, stage1);
+			m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, stage2);
+			m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, stage3);
+			m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, state1);
+			m_pDevice->SetRenderState(D3DRS_SRCBLEND, state2);
+			m_pDevice->SetRenderState(D3DRS_DESTBLEND, state3);
+			
+			m_pDevice->SetTexture(0, orig);
+		}
+	}
 
 	inline void CreateFont(FGUI::FONT &_font, std::string _family, int _size, int _flags, bool _bold) // TODO: handle font flags
 	{
-		D3DXCreateFont(m_pDevice, _size, 0, _bold ? FW_BOLD : FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _family.c_str(), &_font);
+		CString str(_family.c_str());
+		CStringW strw(str);
+		LPCWSTR ptr = strw;
+
+		D3DXCreateFont(m_pDevice, _size, 0, _bold ? FW_BOLD : FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, ptr, &_font);
 	}
 
 	inline FGUI::DIMENSION GetScreenSize()
@@ -32,8 +97,12 @@ namespace FGUI_D3D9
 	{
 		RECT rectFontSize = { 0, 0 };
 
+		CString str(_text.c_str());
+		CStringW strw(str);
+		LPCWSTR ptr = strw;
+
 		// there's probably a better way of getting the size of a text, this will do for the moment.
-		_font->DrawText(0, _text.c_str(), _text.length(), &rectFontSize, DT_CALCRECT, D3DCOLOR_RGBA(0, 0, 0, 0));
+		_font->DrawTextA(0, _text.c_str(), _text.length(), &rectFontSize, DT_CALCRECT, D3DCOLOR_RGBA(0, 0, 0, 0));
 
 		return { (rectFontSize.right - rectFontSize.left), (rectFontSize.bottom - rectFontSize.top) };
 	}
@@ -44,7 +113,11 @@ namespace FGUI_D3D9
 
 		RECT rectFontSize = { _x, _y };
 
-		_font->DrawText(0, _text.c_str(), _text.length(), &rectFontSize, DT_NOCLIP, dwColor);
+		CString str(_text.c_str());
+		CStringW strw(str);
+		LPCWSTR ptr = strw;
+
+		_font->DrawText(0, ptr, _text.length(), &rectFontSize, DT_NOCLIP, dwColor);
 	}
 
 	inline void Rectangle(int _x, int _y, int _width, int _height, FGUI::COLOR _color)
@@ -115,5 +188,7 @@ namespace FGUI_D3D9
 		FGUI::RENDER.Line = FGUI_D3D9::Line;
 		FGUI::RENDER.Text = FGUI_D3D9::Text;
 		FGUI::RENDER.Gradient = FGUI_D3D9::Gradient;
+
+		InitHandicapIcon();
 	}
 }

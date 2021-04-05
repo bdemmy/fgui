@@ -9,6 +9,7 @@
 #include <functional>
 
 // library includes
+#define FGUI_USE_D3D9 // tell FGUI that we are using DirectX 9
 #include "definitions.hpp"
 #include "helpers.hpp"
 

@@ -7,16 +7,23 @@
 #include <array>
 
 #define FGUI_IMPLEMENTATION
-#include <FGUI/FGUI.hpp>
+#include "../../FGUI/FGUI.hpp"
 
 namespace FGUI_INPUT_WIN32
 {
     inline std::array<bool, 256> m_prgpCurrentPressedKeys, m_prgpOldPressedKeys;
     inline FGUI::POINT m_ptCursorPosition, m_ptCursorPositionDelta;
+    inline HWND m_hwnd;
 
     inline void PullInput()
     {
         static FGUI::POINT ptLastKnownPosition = { 0, 0 };
+        static bool initLastKnown = false;
+    	if (!initLastKnown) {
+            // Get current cursor position
+            GetCursorPos(reinterpret_cast<LPPOINT>(&ptLastKnownPosition));
+            initLastKnown = true;
+    	}
 
         std::copy(m_prgpCurrentPressedKeys.begin(), m_prgpCurrentPressedKeys.end(), m_prgpOldPressedKeys.begin());
 
@@ -28,13 +35,19 @@ namespace FGUI_INPUT_WIN32
         // Get current cursor position
         GetCursorPos(reinterpret_cast<LPPOINT>(&m_ptCursorPosition));
 
+        RECT rect = { NULL };
+        if (GetWindowRect(m_hwnd, &rect)) {
+            m_ptCursorPosition.m_iX -= rect.left;
+            m_ptCursorPosition.m_iY -= rect.top;
+        }
+
         // Calculate the cursor position delta
         m_ptCursorPositionDelta = { (m_ptCursorPosition.m_iX - ptLastKnownPosition.m_iX), (m_ptCursorPosition.m_iY - ptLastKnownPosition.m_iY) };
 
         // Get last known position of the cursor
         ptLastKnownPosition = m_ptCursorPosition;
     }
-
+    
     inline bool IsKeyHeld(unsigned int _key_code)
     {
         return m_prgpCurrentPressedKeys.at(_key_code);
@@ -47,6 +60,10 @@ namespace FGUI_INPUT_WIN32
 
     inline bool IsKeyPressed(unsigned int _key_code)
     {
+        if (_key_code < 0 || _key_code > m_prgpCurrentPressedKeys.size()) {
+            return false;
+        }
+    	
         return (m_prgpCurrentPressedKeys.at(_key_code) && !m_prgpOldPressedKeys.at(_key_code));
     }
 
@@ -67,7 +84,7 @@ namespace FGUI_INPUT_WIN32
     }
 
     // NOTE: call this function only once (preferably when you initialize your application)
-    inline void OnEntryPoint()
+    inline void OnEntryPoint(LPDIRECT3DDEVICE9 device)
     {
         FGUI::INPUT.PullInput = FGUI_INPUT_WIN32::PullInput;
         FGUI::INPUT.IsKeyHeld = FGUI_INPUT_WIN32::IsKeyHeld;
@@ -79,5 +96,11 @@ namespace FGUI_INPUT_WIN32
         
         // set input type
         FGUI::INPUT.SetInputType(FGUI::INPUT_TYPE::WIN_32);
+
+        D3DDEVICE_CREATION_PARAMETERS params;
+        if (FAILED(device->GetCreationParameters(&params)))
+            throw std::runtime_error("[InputSys] GetCreationParameters failed.");
+
+        m_hwnd = params.hFocusWindow;
     }
 }

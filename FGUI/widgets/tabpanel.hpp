@@ -10,64 +10,66 @@
 
 // library includes
 #include "widgets.hpp"
+#include "theme.h"
 
 namespace FGUI
 {
-  using TAB_STYLE = enum struct ESTabLayout_t : int {
-    HORIZONTAL = 0,
-    VERTICAL = 1
-  };
 
-  class CTabPanel : public FGUI::CWidgets
-  {
-  public:
-    CTabPanel();
+	using TAB_STYLE = enum struct ESTabLayout_t : int {
+		HORIZONTAL = 0,
+		VERTICAL = 1
+	};
 
-    // @brief: adds a new tab button into the tab panel
-    // @args: std::string title = tab title
-    void AddTab(std::string title);
+	class CTabPanel : public FGUI::CWidgets
+	{
+	public:
+		CTabPanel();
 
-    // @brief: set a default selected tab
-    // @args: std::size_t index = tab to select
-    void SetIndex(std::size_t index);
+		// @brief: adds a new tab button into the tab panel
+		// @args: std::string title = tab title
+		void AddTab(std::string title);
 
-    // @brief: returns the current selected tab of the panel
-    std::size_t GetIndex();
+		// @brief: set a default selected tab
+		// @args: std::size_t index = tab to select
+		void SetIndex(std::size_t index);
 
-    // @brief: set the tab style (HORIZONTAL = it will draw the tab panel horizontaly; VERTICAL = it will draw the tab panel verticaly)
-    // @args: FGUI::TAB_STYLE style = tab panel style (layout)
-    void SetStyle(FGUI::TAB_STYLE style);
+		// @brief: returns the current selected tab of the panel
+		std::size_t GetIndex();
 
-    // @brief: returns the current style of the tab panel
-    int GetStyle();
+		// @brief: set the tab style (HORIZONTAL = it will draw the tab panel horizontaly; VERTICAL = it will draw the tab panel verticaly)
+		// @args: FGUI::TAB_STYLE style = tab panel style (layout)
+		void SetStyle(FGUI::TAB_STYLE style);
 
-    // @brief: populate widget geometry (draw widget)
-    // @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
-    void Geometry(FGUI::WIDGET_STATUS status) override;
+		// @brief: returns the current style of the tab panel
+		int GetStyle();
 
-    // @brief: handle update operations on the widget
-    void Update() override;
+		// @brief: populate widget geometry (draw widget)
+		// @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)
+		void Geometry(FGUI::WIDGET_STATUS status) override;
 
-    // @brief: handle input inside the widget
-    void Input() override;
+		// @brief: handle update operations on the widget
+		void Update() override;
 
-    // @brief: save the widget state
-    // @args: nlohmann::json module = json module
-    void Save(nlohmann::json& module) override;
+		// @brief: handle input inside the widget
+		void Input() override;
 
-    // @brief: load the widget state
-    // @args: nlohmann::json module = json module
-    void Load(nlohmann::json& module) override;
+		// @brief: save the widget state
+		// @args: nlohmann::json module = json module
+		void Save(nlohmann::json& module) override;
 
-    // @brief: handle widget tooltips
-    void Tooltip() override;
+		// @brief: load the widget state
+		// @args: nlohmann::json module = json module
+		void Load(nlohmann::json& module) override;
 
-  private:
-    int m_iEntrySpacing;
-    std::size_t m_ullSelectedEntry;
-    std::vector<std::string> m_prgpTabButtons;
-    int m_nStyle;
-  };
+		// @brief: handle widget tooltips
+		void Tooltip() override;
+
+	private:
+		int m_iEntrySpacing;
+		std::size_t m_ullSelectedEntry;
+		std::vector<std::string> m_prgpTabButtons;
+		int m_nStyle;
+	};
 
 } // namespace FGUI
 

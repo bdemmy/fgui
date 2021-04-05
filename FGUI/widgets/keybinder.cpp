@@ -9,220 +9,242 @@
 namespace FGUI
 {
 
-  CKeyBinder::CKeyBinder()
-  {
-    m_strTitle = "KeyBinder";
-    m_anyFont = 0;
-    m_dmSize = { 150, 20 };
-    m_uiKey = 0;
-    m_strStatus = "None";
-    m_bIsGettingKey = false;
-    m_strTooltip = "";
-    m_nStyle = static_cast<int>(KEY_BINDER_STYLE::HOLD);
-    m_nType = static_cast<int>(WIDGET_TYPE::KEYBINDER);
-    m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
-  }
+	CKeyBinder::CKeyBinder()
+	{
+		m_strTitle = "KeyBinder";
+		m_anyFont = 0;
+		m_dmSize = { 150, 20 };
+		m_uiKey = 0;
+		m_strStatus = "None";
+		m_bIsGettingKey = false;
+		m_strTooltip = "";
+		m_nStyle = static_cast<int>(KEY_BINDER_STYLE::HOLD);
+		m_nType = static_cast<int>(WIDGET_TYPE::KEYBINDER);
+		m_nFlags = static_cast<int>(WIDGET_FLAG::DRAWABLE) | static_cast<int>(WIDGET_FLAG::CLICKABLE) | static_cast<int>(WIDGET_FLAG::SAVABLE);
+	}
 
-  void CKeyBinder::SetKey(unsigned int key_code)
-  {
-    m_uiKey = key_code;
-  }
+	void CKeyBinder::SetKey(unsigned int key_code)
+	{
+		m_uiKey = key_code;
+	}
 
-  bool CKeyBinder::GetKey()
-  {
-    if (m_nStyle == static_cast<int>(FGUI::KEY_BINDER_STYLE::HOLD))
-    {
-      if (FGUI::INPUT.IsKeyHeld(m_uiKey))
-      {
-        return true;
-      }
-    }
-    else if (m_nStyle == static_cast<int>(FGUI::KEY_BINDER_STYLE::CLICK))
-    {
-      if (FGUI::INPUT.IsKeyPressed(m_uiKey))
-      {
-        return true;
-      }
-    }
-    else if (m_nStyle == static_cast<int>(FGUI::KEY_BINDER_STYLE::TOGGLE))
-    {
-      static bool bSwitch = false;
-      
-      if (FGUI::INPUT.IsKeyPressed(m_uiKey))
-      {
-        bSwitch = !bSwitch;
-      }
+	bool CKeyBinder::GetKey()
+	{
+		if (m_nStyle == static_cast<int>(FGUI::KEY_BINDER_STYLE::HOLD))
+		{
+			if (FGUI::INPUT.IsKeyHeld(m_uiKey))
+			{
+				return true;
+			}
+		}
+		else if (m_nStyle == static_cast<int>(FGUI::KEY_BINDER_STYLE::CLICK))
+		{
+			if (FGUI::INPUT.IsKeyPressed(m_uiKey))
+			{
+				return true;
+			}
+		}
+		else if (m_nStyle == static_cast<int>(FGUI::KEY_BINDER_STYLE::TOGGLE))
+		{
+			static bool bSwitch = false;
 
-      return bSwitch;
-    }
+			if (FGUI::INPUT.IsKeyPressed(m_uiKey))
+			{
+				bSwitch = !bSwitch;
+			}
 
-    return false;
-  }
+			return bSwitch;
+		}
 
-  void CKeyBinder::SetStyle(FGUI::KEY_BINDER_STYLE style)
-  {
-    m_nStyle = static_cast<int>(style);
-  }
+		return false;
+	}
 
-  void CKeyBinder::Geometry(FGUI::WIDGET_STATUS status)
-  {
-    FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+	void CKeyBinder::SetStyle(FGUI::KEY_BINDER_STYLE style)
+	{
+		m_nStyle = static_cast<int>(style);
+	}
 
-    FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
+	void CKeyBinder::Geometry(FGUI::WIDGET_STATUS status)
+	{
+		// Set our bound value
+		if (m_uBound) {
+			m_uiKey = *m_uBound;
+		}
+		
+		FGUI::COLOR bg{ 30, 30, 30 }; // { 245, 245, 245 }
+		FGUI::COLOR borderColor{ 60, 60, 60 }; // { 220, 220, 200 }
+		FGUI::COLOR borderHover{ 80, 80, 80 }; // { 220, 220, 200 }
+		FGUI::COLOR bgLabelColor{ 220, 220, 220 }; // { 35, 35, 35 }
+		
+		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
-    // keybinder body
-    if (status == FGUI::WIDGET_STATUS::HOVERED || m_bIsGettingKey)
-    {
-      FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 195, 195, 195 });
-      FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), { 255, 255, 235 });
-    }
-    else
-    {
-      FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 220, 220, 220 });
-      FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), { 255, 255, 255 });
-    }
+		FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
 
-    // keybinder label
-    FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strTitle + ":");
+		// keybinder body
+		if (status == FGUI::WIDGET_STATUS::HOVERED && !m_bIsGettingKey)
+		{
+			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, borderHover);
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), bg);
+		}
+		else if (m_bIsGettingKey) {
+			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 255, 40, 40 });
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), bg);
+		}
+		else
+		{
+			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, borderColor);
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), bg);
+		}
 
-    // change status 
-    // TODO: improve this (clean it up)
-    switch (FGUI::INPUT.GetInputType())
-    {
-      case static_cast<int>(INPUT_TYPE::WIN_32) :
-      {
-        m_strStatus = m_kcCodes.m_strVirtualKeyCodes[m_uiKey].data();
-        break;
-      }
-      case static_cast<int>(INPUT_TYPE::INPUT_SYSTEM) :
-      {
-        m_strStatus = m_kcCodes.m_strInputSystem[m_uiKey].data();
-        break;
-      }
-      case static_cast<int>(INPUT_TYPE::CUSTOM) :
-      {
-        m_strStatus = m_kcCodes.m_strCustomKeyCodes[m_uiKey].data();
-        break;
-      }
-      default:
-      {
-        std::throw_with_nested(std::runtime_error("make sure to set an input type. Take a look at the wiki for more info."));
-        break;
-      }
-    }
+		// keybinder label
+		//FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, bgLabelColor, m_strTitle + ":");
 
-    // keybinder current key
-    FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 35, 35, 35 }, m_strStatus);
-  }
+		// change status 
+		// TODO: improve this (clean it up)
+		switch (FGUI::INPUT.GetInputType())
+		{
+			case static_cast<int>(INPUT_TYPE::WIN_32) :
+			{
+				m_strStatus = m_kcCodes.m_strVirtualKeyCodes[m_uiKey].data();
+				break;
+			}
+			case static_cast<int>(INPUT_TYPE::INPUT_SYSTEM) :
+			{
+				m_strStatus = m_kcCodes.m_strInputSystem[m_uiKey].data();
+				break;
+			}
+			case static_cast<int>(INPUT_TYPE::CUSTOM) :
+			{
+				m_strStatus = m_kcCodes.m_strCustomKeyCodes[m_uiKey].data();
+				break;
+			}
+			default:
+			{
+				std::throw_with_nested(std::runtime_error("make sure to set an input type. Take a look at the wiki for more info."));
+				break;
+			}
+		}
 
-  void CKeyBinder::Update()
-  {
-    if (m_bIsGettingKey)
-    {
-      for (std::size_t key = 0; key < 256; key++)
-      {
-        // if the user has pressed a valid key
-        if (FGUI::INPUT.IsKeyPressed(key))
-        {
-          // if the user press ESCAPE
-          if (key == KEY_ESCAPE)
-          {
-            // change the key to an invalid key
-            m_uiKey = 0;
+		// keybinder current key
+		const auto text = m_bIsGettingKey ? "..." : m_strStatus;
+		const static auto size = FGUI::RENDER.GetTextSize(m_anyFont, "...");
+		const auto size2 = FGUI::RENDER.GetTextSize(m_anyFont, text);
+		FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (arWidgetRegion.m_iRight / 2) - (size2.m_iWidth / 2), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (size2.m_iHeight / 2), m_anyFont, bgLabelColor, text);
+	}
 
-            // reset status
-            m_strStatus = "None";
+	void CKeyBinder::Update()
+	{
+		if (m_bIsGettingKey)
+		{
+			for (std::size_t key = 0; key < 256; key++)
+			{
+				// if the user has pressed a valid key
+				if (FGUI::INPUT.IsKeyPressed(key))
+				{
+					// if the user press ESCAPE
+					if (key == KEY_ESCAPE)
+					{
+						// change the key to an invalid key
+						m_uiKey = 0;
 
-            // block keybinder
-            m_bIsGettingKey = false;
-          }
-          else // iterate the rest of the keys
-          {
-            // change status to currently pressed key
-            switch (FGUI::INPUT.GetInputType())
-            {
-              case static_cast<int>(INPUT_TYPE::WIN_32) :
-              {
-                m_strStatus = m_kcCodes.m_strVirtualKeyCodes[key].data();
-                break;
-              }
-              case static_cast<int>(INPUT_TYPE::INPUT_SYSTEM) :
-              {
-                m_strStatus = m_kcCodes.m_strInputSystem[key].data();
-                break;
-              }
-              case static_cast<int>(INPUT_TYPE::CUSTOM) :
-              {
-                m_strStatus = m_kcCodes.m_strCustomKeyCodes[m_uiKey].data();
-                break;
-              }
-              default:
-              {
-                std::throw_with_nested(std::runtime_error("make sure to set an input type. Take a look at the wiki for more info."));
-                break;
-              }
-            }
+						// reset status
+						m_strStatus = "None";
 
-            // set key
-            m_uiKey = key;
+						// block keybinder
+						m_bIsGettingKey = false;
+					}
+					else // iterate the rest of the keys
+					{
+						// change status to currently pressed key
+						switch (FGUI::INPUT.GetInputType())
+						{
+							case static_cast<int>(INPUT_TYPE::WIN_32) :
+							{
+								m_strStatus = m_kcCodes.m_strVirtualKeyCodes[key].data();
+								break;
+							}
+							case static_cast<int>(INPUT_TYPE::INPUT_SYSTEM) :
+							{
+								m_strStatus = m_kcCodes.m_strInputSystem[key].data();
+								break;
+							}
+							case static_cast<int>(INPUT_TYPE::CUSTOM) :
+							{
+								m_strStatus = m_kcCodes.m_strCustomKeyCodes[m_uiKey].data();
+								break;
+							}
+							default:
+							{
+								std::throw_with_nested(std::runtime_error("make sure to set an input type. Take a look at the wiki for more info."));
+								break;
+							}
+						}
 
-            // block keybinder from receiving input
-            m_bIsGettingKey = false;
-          }
-        }
-      }
-    }
-    
-    // stop receiving input if another widget is being focused
-    if (std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->GetFocusedWidget())
-    {
-      m_bIsGettingKey = false;
-    }
-  }
+						// set key
+						m_uiKey = key;
 
-  void CKeyBinder::Input()
-  {
-    m_bIsGettingKey = !m_bIsGettingKey;
-  }
+						// block keybinder from receiving input
+						m_bIsGettingKey = false;
 
-  void CKeyBinder::Save(nlohmann::json& module)
-  {
-    // remove spaces from widget name
-    std::string strFormatedWidgetName = GetTitle();
-    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+						// Set our bound value
+						if (m_uBound) {
+							*m_uBound = m_uiKey;
+						}
+					}
+				}
+			}
+		}
 
-    module[strFormatedWidgetName] = m_uiKey;
-  }
+		// stop receiving input if another widget is being focused
+		if (std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->GetFocusedWidget())
+		{
+			m_bIsGettingKey = false;
+		}
+	}
 
-  void CKeyBinder::Load(nlohmann::json& module)
-  {
-    // remove spaces from widget name
-    std::string strFormatedWidgetName = GetTitle();
-    std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
+	void CKeyBinder::Input()
+	{
+		m_bIsGettingKey = !m_bIsGettingKey;
+	}
 
-    // change widget default key to the one stored on file
-    if (module.contains(strFormatedWidgetName))
-    {
-      m_uiKey = module[strFormatedWidgetName];
-      
-      // update widget status
-      m_strStatus = m_kcCodes.m_strVirtualKeyCodes[m_uiKey].data();
-    }
-  }
+	void CKeyBinder::Save(nlohmann::json& module)
+	{
+		// remove spaces from widget name
+		std::string strFormatedWidgetName = GetTitle();
+		std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
-  void CKeyBinder::Tooltip()
-  {
-    if (m_strTooltip.length() > 1 && !m_bIsGettingKey)
-    {
-      FGUI::DIMENSION dmTooltipTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTooltip);
+		module[strFormatedWidgetName] = m_uiKey;
+	}
 
-      FGUI::AREA arTooltipRegion = { (FGUI::INPUT.GetCursorPos().m_iX + 10), (FGUI::INPUT.GetCursorPos().m_iY + 10), (dmTooltipTextSize.m_iWidth + 10), (dmTooltipTextSize.m_iHeight + 10) };
+	void CKeyBinder::Load(nlohmann::json& module)
+	{
+		// remove spaces from widget name
+		std::string strFormatedWidgetName = GetTitle();
+		std::replace(strFormatedWidgetName.begin(), strFormatedWidgetName.end(), ' ', '_');
 
-      FGUI::RENDER.Outline(arTooltipRegion.m_iLeft, arTooltipRegion.m_iTop, arTooltipRegion.m_iRight, arTooltipRegion.m_iBottom, { 180, 95, 95 });
-      FGUI::RENDER.Rectangle((arTooltipRegion.m_iLeft + 1), (arTooltipRegion.m_iTop + 1), (arTooltipRegion.m_iRight - 2), (arTooltipRegion.m_iBottom - 2), { 225, 90, 75 });
-      FGUI::RENDER.Text(arTooltipRegion.m_iLeft + (arTooltipRegion.m_iRight / 2) - (dmTooltipTextSize.m_iWidth / 2),
-        arTooltipRegion.m_iTop + (arTooltipRegion.m_iBottom / 2) - (dmTooltipTextSize.m_iHeight / 2), m_anyFont, { 245, 245, 245 }, m_strTooltip);
-    }
-  }
+		// change widget default key to the one stored on file
+		if (module.contains(strFormatedWidgetName))
+		{
+			m_uiKey = module[strFormatedWidgetName];
+
+			// update widget status
+			m_strStatus = m_kcCodes.m_strVirtualKeyCodes[m_uiKey].data();
+		}
+	}
+
+	void CKeyBinder::Tooltip()
+	{
+		if (m_strTooltip.length() > 1 && !m_bIsGettingKey)
+		{
+			FGUI::DIMENSION dmTooltipTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTooltip);
+
+			FGUI::AREA arTooltipRegion = { (FGUI::INPUT.GetCursorPos().m_iX + 10), (FGUI::INPUT.GetCursorPos().m_iY + 10), (dmTooltipTextSize.m_iWidth + 10), (dmTooltipTextSize.m_iHeight + 10) };
+
+			FGUI::RENDER.Outline(arTooltipRegion.m_iLeft, arTooltipRegion.m_iTop, arTooltipRegion.m_iRight, arTooltipRegion.m_iBottom, { 180, 95, 95 });
+			FGUI::RENDER.Rectangle((arTooltipRegion.m_iLeft + 1), (arTooltipRegion.m_iTop + 1), (arTooltipRegion.m_iRight - 2), (arTooltipRegion.m_iBottom - 2), { 225, 90, 75 });
+			FGUI::RENDER.Text(arTooltipRegion.m_iLeft + (arTooltipRegion.m_iRight / 2) - (dmTooltipTextSize.m_iWidth / 2),
+				arTooltipRegion.m_iTop + (arTooltipRegion.m_iBottom / 2) - (dmTooltipTextSize.m_iHeight / 2), m_anyFont, { 245, 245, 245 }, m_strTooltip);
+		}
+	}
 
 } // namespace FGUI

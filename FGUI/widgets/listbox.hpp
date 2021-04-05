@@ -13,6 +13,7 @@
 
 // library includes
 #include "widgets.hpp"
+#include "theme.h"
 
 namespace FGUI
 {
@@ -35,6 +36,8 @@ namespace FGUI
     // @brief: adds a new entry inside the listbox
     // @args: std::string name = entry title, unsigned int value = entry custom value
     void AddEntry(std::string name, unsigned int value = 0);
+
+    void ClearEntries();
 
     // @brief: adds a function callback for the listbox (it will call the function whenever the user selects something on the listbox)
     // @args: std::function<void()> callback = function instance

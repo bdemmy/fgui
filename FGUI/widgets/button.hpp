@@ -10,6 +10,7 @@
 
 // library includes
 #include "widgets.hpp"
+#include "theme.h"
 
 namespace FGUI
 {

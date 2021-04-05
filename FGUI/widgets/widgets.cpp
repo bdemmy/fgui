@@ -46,9 +46,9 @@ namespace FGUI
 
     if (m_pParentWidget == GetWindowContainer())
     {
-      static constexpr int iContainerWindowHeaderSize = 35; // NOTE: feel free to change this
+      static constexpr int iContainerWindowHeaderSize = 0; // NOTE: feel free to change this
 
-      ptMutablePosition.m_iX += 10;
+      ptMutablePosition.m_iX += 0;
       ptMutablePosition.m_iY += iContainerWindowHeaderSize;
     }
 
