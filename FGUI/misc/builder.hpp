@@ -518,7 +518,7 @@ namespace FGUI
 
 			if (m_pTemporaryWidget->GetType() == static_cast<int>(WIDGET_TYPE::COLORPICKER))
 			{
-				//std::reinterpret_pointer_cast<FGUI::CColorPicker>(m_pTemporaryWidget)->Bind(WIDGET_BIND_TYPE::FLOAT, data);
+				std::reinterpret_pointer_cast<FGUI::CColorPicker>(m_pTemporaryWidget)->Bind(static_cast<float*>(data));
 			}
 
 			return *this;

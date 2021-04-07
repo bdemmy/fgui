@@ -104,6 +104,8 @@ namespace FGUI
     // @brief: get the current parent widget
     std::shared_ptr<FGUI::CWidgets> GetParentWidget();
 
+    int GetPage();
+
   protected:
     // @brief: populate widget geometry (draw widget)
     // @args: FGUI::WIDGET_STATUS status = widget status (HOVERED, etc)

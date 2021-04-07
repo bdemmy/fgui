@@ -8,6 +8,9 @@
 // library includes
 #include "widgets.hpp"
 
+// theme include
+#include "theme.h"
+
 namespace FGUI
 {
 
@@ -54,6 +57,10 @@ namespace FGUI
 
 		// Binding widget to data
 		bool Bind(WIDGET_BIND_TYPE type, void* data) {
+			if (!data) {
+				return false;
+			}
+			
 			switch (type) {
 			case WIDGET_BIND_TYPE::INT:
 			case WIDGET_BIND_TYPE::FLOAT:

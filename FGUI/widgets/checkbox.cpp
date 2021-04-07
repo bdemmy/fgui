@@ -55,7 +55,7 @@ namespace FGUI
 				FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 255, 40, 40 });
 			}
 			 
-			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 6), (arWidgetRegion.m_iTop + 6), (arWidgetRegion.m_iRight - 12), (arWidgetRegion.m_iBottom - 12), { 255, 40, 40 });
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 5), (arWidgetRegion.m_iTop + 5), (arWidgetRegion.m_iRight - 10), (arWidgetRegion.m_iBottom - 10), { 255, 40, 40 });
 		}
 		else
 		{

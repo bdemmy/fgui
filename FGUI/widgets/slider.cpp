@@ -59,11 +59,6 @@ namespace FGUI
 				m_flValue = m_rngBoundaries.m_flMin;
 			}
 		}
-		
-		FGUI::COLOR bgOn{ 100,20,20 }; // { 115, 115, 115 }
-		FGUI::COLOR bgOff{ 25, 25, 25 }; // { 65, 65, 65 }
-		FGUI::COLOR label{ 220, 220, 220 }; // { 35, 35, 35 }
-		FGUI::COLOR border{ 60,60,60 };
 
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
@@ -81,16 +76,16 @@ namespace FGUI
 		float flLocation = (flRatio * (m_dmSize.m_iWidth - m_dmSliderThumbSize.m_iWidth - 2));
 
 		// slider body
-		FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft+1, arWidgetRegion.m_iTop+1, arWidgetRegion.m_iRight-2, arWidgetRegion.m_iBottom-2, bgOff);
-		FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft+1, arWidgetRegion.m_iTop+1, flLocation + (m_dmSliderThumbSize.m_iWidth / 2), arWidgetRegion.m_iBottom-2, bgOn);
-		FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, border);
+		FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft+1, arWidgetRegion.m_iTop+1, arWidgetRegion.m_iRight-2, arWidgetRegion.m_iBottom-2, COLOR_SLIDER_BG_OFF);
+		FGUI::RENDER.Rectangle(arWidgetRegion.m_iLeft+1, arWidgetRegion.m_iTop+1, flLocation + (m_dmSliderThumbSize.m_iWidth / 2), arWidgetRegion.m_iBottom-2, COLOR_SLIDER_BG_ON);
+		FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, COLOR_SLIDER_BORDER);
 
 		// slider thumb
 		FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + flLocation) + 1, (arWidgetRegion.m_iTop), m_dmSliderThumbSize.m_iWidth, arWidgetRegion.m_iBottom, { 255, 40, 40 });
 
 		// slider label & value
-		FGUI::RENDER.Text(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 2, m_anyFont, label, m_strTitle);
-		FGUI::RENDER.Text((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - dmValueTextSize.m_iWidth, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 2, m_anyFont, label, text);
+		FGUI::RENDER.Text(arWidgetRegion.m_iLeft + 2, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 3, m_anyFont, COLOR_SLIDER_LABEL, m_strTitle);
+		FGUI::RENDER.Text((arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight) - dmValueTextSize.m_iWidth - 2, (arWidgetRegion.m_iTop - dmTitleTextSize.m_iHeight) - 3, m_anyFont, COLOR_SLIDER_LABEL, text);
 
 		IGNORE_ARGS(status);
 	}

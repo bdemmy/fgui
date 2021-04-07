@@ -267,7 +267,7 @@ namespace FGUI
 
 			// Render close circle in top right
 			const auto close_button_x = arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS;
-			const auto close_button_y = (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS + RAINBOW_SIZE;
+			const auto close_button_y = arWidgetRegion.m_iTop + (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS + RAINBOW_SIZE;
 			const auto close_button_w = CLOSE_BUTTON_RADIUS * 2;
 			
 			FGUI_D3D9::Rectangle(close_button_x,
@@ -462,7 +462,7 @@ namespace FGUI
 			FGUI::AREA arDraggableArea = { m_ptPosition.m_iX, m_ptPosition.m_iY, m_dmSize.m_iWidth, 20 };
 			FGUI::AREA arClosebuttonArea = {
 				m_ptPosition.m_iX + m_dmSize.m_iWidth - (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS,
-				(TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS + RAINBOW_SIZE,
+				m_ptPosition.m_iY + (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS + RAINBOW_SIZE,
 				2 * CLOSE_BUTTON_RADIUS,
 				2 * CLOSE_BUTTON_RADIUS
 			};

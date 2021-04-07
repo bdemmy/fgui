@@ -55,7 +55,7 @@ namespace FGUI
 		}
 
 	private:
-		float* m_fBoundColor;
+		float* m_fBoundColor {nullptr};
 		FGUI::COLOR m_clrDefault;
 		unsigned int m_uiPixelation;
 		bool m_bIsOpened;
