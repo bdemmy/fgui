@@ -97,8 +97,12 @@ namespace FGUI
 			}
 		}
 
-		void Bind(int* ref) {
+		void BindIndex(int* ref) {
 			m_boundInt = ref;
+		}
+
+		void SetHeight(int height) {
+			m_iCustomHeight = height;
 		}
 
 

@@ -469,13 +469,17 @@ namespace FGUI
 
 			static bool bIsDraggingContainer = false;
 
+			// See if the user pressed the close button
 			if (FGUI::INPUT.IsCursorInArea(arClosebuttonArea)) {
-				if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
+				if (FGUI::INPUT.IsKeyReleased(MOUSE_1))
 				{
 					m_bIsOpened = false;
+					bIsDraggingContainer = false;
 					return;
 				}
 			}
+
+			// See if the user should be dragging
 			if (FGUI::INPUT.IsCursorInArea(arDraggableArea))
 			{
 				if (FGUI::INPUT.IsKeyHeld(MOUSE_1))

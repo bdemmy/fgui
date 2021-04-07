@@ -49,7 +49,11 @@ namespace FGUI
 	{
 		// Update our bound data
 		if (m_eBindType == WIDGET_BIND_TYPE::FLOAT || m_eBindType == WIDGET_BIND_TYPE::INT) {
-			m_flValue = *static_cast<float*>(m_pvBoundData);
+			if (m_eBindType == WIDGET_BIND_TYPE::FLOAT) {
+				m_flValue = *static_cast<float*>(m_pvBoundData);
+			} else {
+				m_flValue = *static_cast<int*>(m_pvBoundData);
+			}
 
 			if (m_flValue > m_rngBoundaries.m_flMax) {
 				m_flValue = m_rngBoundaries.m_flMax;

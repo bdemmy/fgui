@@ -74,6 +74,10 @@ namespace FGUI
 		{
 			m_pTemporaryWidget->SetSize(width, height);
 
+			/*if (m_pTemporaryWidget->GetType() == static_cast<int>(FGUI::WIDGET_TYPE::COMBOBOX)) {
+				std::reinterpret_pointer_cast<FGUI::CComboBox>(m_pTemporaryWidget)->SetHeight(height);
+			}*/
+
 			return *this;
 		};
 
