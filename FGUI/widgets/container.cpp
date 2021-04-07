@@ -263,7 +263,7 @@ namespace FGUI
 			}
 
 			// Render icon in top left
-			//FGUI_D3D9::RenderHandicapIcon(arWidgetRegion.m_iLeft + 2, arWidgetRegion.m_iTop + 4, TITLE_HEIGHT - 4, TITLE_HEIGHT - 4);
+			// TODO
 
 			// Render close circle in top right
 			const auto close_button_x = arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS;

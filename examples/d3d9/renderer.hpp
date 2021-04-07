@@ -17,13 +17,13 @@ namespace FGUI_D3D9
 	inline IDirect3DDevice9* m_pDevice;
 	inline IDirect3DTexture9* ppTexture;
 
-	inline void InitHandicapIcon() {
+	inline void InitIcon() {
 		const auto result = D3DXCreateTextureFromFileA(m_pDevice, "C:\\Users\\bdemm\\Desktop\\blackicon.jpg", &ppTexture);
 
 		assert(result == D3D_OK);
 	}
 
-	inline void RenderHandicapIcon(int _x, int _y, int _width, int _height) {
+	inline void RenderIcon(int _x, int _y, int _width, int _height) {
 		IDirect3DBaseTexture9* orig;
 		m_pDevice->GetTexture(0, &orig);
 		
@@ -189,6 +189,6 @@ namespace FGUI_D3D9
 		FGUI::RENDER.Text = FGUI_D3D9::Text;
 		FGUI::RENDER.Gradient = FGUI_D3D9::Gradient;
 
-		InitHandicapIcon();
+		InitIcon();
 	}
 }
