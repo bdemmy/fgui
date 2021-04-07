@@ -19,6 +19,7 @@ namespace FGUI
 	constexpr auto TITLE_HEIGHT = 20;
 	constexpr auto RAINBOW_SIZE = 2;
 	constexpr auto INNER_PAD = 14;
+	constexpr auto CLOSE_BUTTON_RADIUS = (TITLE_HEIGHT / 2) - 4;
 	
 	// Rainbow Settings
 	constexpr float rainbowSpeed = 0.001;

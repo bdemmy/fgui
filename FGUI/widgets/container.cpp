@@ -261,8 +261,37 @@ namespace FGUI
 				// invoke function
 				m_fnctCallback();
 			}
+
+			// Render icon in top left
+			//FGUI_D3D9::RenderHandicapIcon(arWidgetRegion.m_iLeft + 2, arWidgetRegion.m_iTop + 4, TITLE_HEIGHT - 4, TITLE_HEIGHT - 4);
+
+			// Render close circle in top right
+			const auto close_button_x = arWidgetRegion.m_iLeft + arWidgetRegion.m_iRight - (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS;
+			const auto close_button_y = (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS + RAINBOW_SIZE;
+			const auto close_button_w = CLOSE_BUTTON_RADIUS * 2;
 			
-			FGUI_D3D9::RenderHandicapIcon(arWidgetRegion.m_iLeft + 2, arWidgetRegion.m_iTop + 4, TITLE_HEIGHT - 4, TITLE_HEIGHT - 4);
+			FGUI_D3D9::Rectangle(close_button_x,
+				close_button_y,
+				close_button_w,
+				close_button_w,
+				COLOR3
+			);
+
+			if (FGUI::INPUT.IsCursorInArea({close_button_x, close_button_y, close_button_w, close_button_w})) {
+				FGUI_D3D9::Rectangle(close_button_x + 1,
+					close_button_y + 1,
+					close_button_w - 2,
+					close_button_w - 2,
+					ACCENT
+				);
+			} else {
+				FGUI_D3D9::Rectangle(close_button_x + 1,
+					close_button_y + 1,
+					close_button_w - 2,
+					close_button_w - 2,
+					COLOR2
+				);
+			}
 		}
 		
 		else // otherwise, behave like a normal groupbox
@@ -431,9 +460,22 @@ namespace FGUI
 			}
 
 			FGUI::AREA arDraggableArea = { m_ptPosition.m_iX, m_ptPosition.m_iY, m_dmSize.m_iWidth, 20 };
+			FGUI::AREA arClosebuttonArea = {
+				m_ptPosition.m_iX + m_dmSize.m_iWidth - (TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS,
+				(TITLE_HEIGHT / 2) - CLOSE_BUTTON_RADIUS + RAINBOW_SIZE,
+				2 * CLOSE_BUTTON_RADIUS,
+				2 * CLOSE_BUTTON_RADIUS
+			};
 
 			static bool bIsDraggingContainer = false;
 
+			if (FGUI::INPUT.IsCursorInArea(arClosebuttonArea)) {
+				if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
+				{
+					m_bIsOpened = false;
+					return;
+				}
+			}
 			if (FGUI::INPUT.IsCursorInArea(arDraggableArea))
 			{
 				if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
