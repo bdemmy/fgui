@@ -16,6 +16,7 @@ namespace FGUI_D3D9
 	// NOTE: you still need to initialize the device.
 	inline IDirect3DDevice9* m_pDevice;
 	inline IDirect3DTexture9* ppTexture;
+	inline float g_flRenderAlpha;
 
 	inline void InitIcon() {
 		const auto result = D3DXCreateTextureFromFileA(m_pDevice, "C:\\Users\\bdemm\\Desktop\\blackicon.jpg", &ppTexture);
@@ -109,6 +110,9 @@ namespace FGUI_D3D9
 
 	inline void Text(int _x, int _y, FGUI::FONT _font, FGUI::COLOR _color, std::string _text)
 	{
+		// Use our global alpha
+		_color.m_ucAlpha *= (g_flRenderAlpha / 255.f);
+		
 		D3DCOLOR dwColor = D3DCOLOR_RGBA(_color.m_ucRed, _color.m_ucGreen, _color.m_ucBlue, _color.m_ucAlpha);
 
 		RECT rectFontSize = { _x, _y };
@@ -122,6 +126,9 @@ namespace FGUI_D3D9
 
 	inline void Rectangle(int _x, int _y, int _width, int _height, FGUI::COLOR _color)
 	{
+		// Use our global alpha
+		_color.m_ucAlpha *= (g_flRenderAlpha / 255.f);
+		
 		D3DCOLOR dwColor = D3DCOLOR_RGBA(_color.m_ucRed, _color.m_ucGreen, _color.m_ucBlue, _color.m_ucAlpha);
 
 		const FGUI::VERTEX vtxVertices[4] =
@@ -147,6 +154,9 @@ namespace FGUI_D3D9
 
 	inline void Line(int _from_x, int _from_y, int _to_x, int _to_y, FGUI::COLOR _color)
 	{
+		// Use our global alpha
+		_color.m_ucAlpha *= (g_flRenderAlpha / 255.f);
+		
 		D3DCOLOR dwColor = D3DCOLOR_RGBA(_color.m_ucRed, _color.m_ucGreen, _color.m_ucBlue, _color.m_ucAlpha);
 		
 		const FGUI::VERTEX vtxVertices[2] =
@@ -161,6 +171,9 @@ namespace FGUI_D3D9
 
 	inline void Gradient(int _x, int _y, int _width, int _height, FGUI::COLOR _color1, FGUI::COLOR _color2, bool _horizontal)
 	{
+		_color1.m_ucAlpha *= (g_flRenderAlpha / 255.f);
+		_color2.m_ucAlpha *= (g_flRenderAlpha / 255.f);
+		
 		// there's probably a better way to do this kind of gradient as well.
 		D3DCOLOR dwColor1 = D3DCOLOR_RGBA(_color1.m_ucRed, _color1.m_ucGreen, _color1.m_ucBlue, _color1.m_ucAlpha);
 		D3DCOLOR dwColor2 = D3DCOLOR_RGBA(_color2.m_ucRed, _color2.m_ucGreen, _color2.m_ucBlue, _color2.m_ucAlpha);
@@ -176,6 +189,22 @@ namespace FGUI_D3D9
 		m_pDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
 		m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vtxVertices, sizeof(FGUI::VERTEX));
 	}
+
+	inline void SetAlpha(float alpha) {
+		if (alpha < 0) {
+			alpha = 0;
+		}
+
+		if (alpha > 255) {
+			alpha = 255;
+		}
+
+		g_flRenderAlpha = alpha;
+	}
+
+	inline float GetAlpha() {
+		return g_flRenderAlpha;
+	}
   
   	// NOTE: call this function only once (preferably when you initialize your application)
 	inline void OnEntryPoint()
@@ -188,6 +217,8 @@ namespace FGUI_D3D9
 		FGUI::RENDER.Line = FGUI_D3D9::Line;
 		FGUI::RENDER.Text = FGUI_D3D9::Text;
 		FGUI::RENDER.Gradient = FGUI_D3D9::Gradient;
+		FGUI::RENDER.SetAlpha = FGUI_D3D9::SetAlpha;
+		FGUI::RENDER.GetAlpha = FGUI_D3D9::GetAlpha;
 
 		InitIcon();
 	}

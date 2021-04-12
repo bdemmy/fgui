@@ -48,10 +48,6 @@ namespace FGUI
 			SetColor(COLOR{ (uint8_t)m_fBoundColor[0],(uint8_t)m_fBoundColor[1],(uint8_t)m_fBoundColor[2],(uint8_t)m_fBoundColor[3] });
 		}
 		
-		FGUI::COLOR bg{ 30, 30, 30 }; // { 195, 195, 195 }
-		FGUI::COLOR borderColor{ 60, 60, 60 }; // { 220, 220, 220 }
-		FGUI::COLOR bgLabelColor{ 220, 220, 220 }; // { 35, 35, 35 }
-		
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
 		// color picker button body

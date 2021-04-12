@@ -70,12 +70,7 @@ namespace FGUI
 		if (m_uBound) {
 			m_uiKey = *m_uBound;
 		}
-		
-		FGUI::COLOR bg{ 30, 30, 30 }; // { 245, 245, 245 }
-		FGUI::COLOR borderColor{ 60, 60, 60 }; // { 220, 220, 200 }
-		FGUI::COLOR borderHover{ 80, 80, 80 }; // { 220, 220, 200 }
-		FGUI::COLOR bgLabelColor{ 220, 220, 220 }; // { 35, 35, 35 }
-		
+
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
 		FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
@@ -83,17 +78,17 @@ namespace FGUI
 		// keybinder body
 		if (status == FGUI::WIDGET_STATUS::HOVERED && !m_bIsGettingKey)
 		{
-			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, borderHover);
-			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), bg);
+			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, COLOR_CKEYBINDER_BORDER);
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), COLOR_CKEYBINDER_BG_HOVER);
 		}
 		else if (m_bIsGettingKey) {
-			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 255, 40, 40 });
-			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), bg);
+			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, ACCENT);
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), COLOR_CKEYBINDER_BG_HOVER);
 		}
 		else
 		{
-			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, borderColor);
-			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), bg);
+			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, COLOR_CKEYBINDER_BORDER);
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), COLOR_CKEYBINDER_BG);
 		}
 
 		// keybinder label
@@ -129,7 +124,7 @@ namespace FGUI
 		const auto text = m_bIsGettingKey ? "..." : m_strStatus;
 		const static auto size = FGUI::RENDER.GetTextSize(m_anyFont, "...");
 		const auto size2 = FGUI::RENDER.GetTextSize(m_anyFont, text);
-		FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (arWidgetRegion.m_iRight / 2) - (size2.m_iWidth / 2), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (size2.m_iHeight / 2), m_anyFont, bgLabelColor, text);
+		FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (arWidgetRegion.m_iRight / 2) - (size2.m_iWidth / 2), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (size2.m_iHeight / 2), m_anyFont, COLOR_CKEYBINDER_LABEL, text);
 	}
 
 	void CKeyBinder::Update()

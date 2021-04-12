@@ -8,6 +8,9 @@
 // library includes
 #include "widgets.hpp"
 
+// Theme stuff
+#include "theme.h"
+
 namespace FGUI
 {
 	class CColorPicker : public FGUI::CWidgets
@@ -51,7 +54,13 @@ namespace FGUI
 		void Tooltip() override;
 
 		void Bind(float* data) {
+			if (!data) {
+				return;
+			}
+
+			// Bind the color and set the data
 			m_fBoundColor = data;
+			m_clrDefault = FGUI::COLOR(data[0], data[1], data[2], 255);
 		}
 
 	private:

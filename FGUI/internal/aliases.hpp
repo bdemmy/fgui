@@ -34,6 +34,8 @@ namespace FGUI
     using pDrawGradient = std::add_pointer_t<void(int, int, int, int, FGUI::COLOR, FGUI::COLOR, bool)>;
     using pDrawLine = std::add_pointer_t<void(int, int, int, int, FGUI::COLOR)>;
     using pDrawText = std::add_pointer_t<void(int, int, FGUI::FONT, FGUI::COLOR, std::string)>;
+    using pSetAlpha = std::add_pointer_t<void(float)>;
+    using pGetAlpha = std::add_pointer_t<float()>;
 
     // input functions pointers
     using pPullInput = std::add_pointer_t<void()>;
@@ -54,6 +56,8 @@ namespace FGUI
       pDrawGradient Gradient;
       pDrawLine Line;
       pDrawText Text;
+      pSetAlpha SetAlpha;
+      pGetAlpha GetAlpha;
     };
 
     using INPUT_SYTEM = struct SInputSystem_t

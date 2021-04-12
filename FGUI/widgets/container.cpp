@@ -106,7 +106,16 @@ namespace FGUI
 
 	void CContainer::SetState(bool state)
 	{
-		m_bIsOpened = state;
+		if (GetParentWidget()) {
+			m_bIsOpened = state;
+			return;
+		}
+
+		last_time = high_resolution_clock::now();
+		if (!m_bIsOpened) {
+			m_bIsOpened = true;
+		}
+		fading_out = !fading_out;
 	}
 
 	bool CContainer::GetState()
@@ -220,6 +229,13 @@ namespace FGUI
 
 	void CContainer::Geometry(FGUI::WIDGET_STATUS status)
 	{
+		float oldAlpha = 255;
+		if (!GetParentWidget()) {
+			// Set the global alpha
+			oldAlpha = FGUI::RENDER.GetAlpha();
+			FGUI::RENDER.SetAlpha(m_flAlpha);
+		}
+		
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
 		FGUI::DIMENSION dmTitleTextSize = FGUI::RENDER.GetTextSize(m_anyFont, m_strTitle);
@@ -442,11 +458,34 @@ namespace FGUI
 			}
 		}
 
+		if (!GetParentWidget()) {
+			FGUI::RENDER.SetAlpha(oldAlpha);
+		}
+		
 		IGNORE_ARGS(status);
 	}
 
 	void CContainer::Update()
 	{
+		const auto now = high_resolution_clock::now();
+		const auto duration = duration_cast<milliseconds>(now - last_time).count();
+		
+		auto delta = duration / MENU_FADE_DURATION;
+		if (delta > 1) {
+			delta = 1;
+		}
+		auto alpha = delta * 255.f;
+
+		if (fading_out) {
+			alpha = 255.f - alpha;
+
+			if (alpha <= 0.01) {
+				m_bIsOpened = false;
+			}
+		}
+
+		m_flAlpha = alpha;
+		
 		// reset cursor
 		SetCursor(CURSOR_STYLE::ARROW);
 

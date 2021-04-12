@@ -8,9 +8,11 @@
 // library includes
 #include "widgets.hpp"
 
+// theme stuff
+#include "theme.h"
+
 namespace FGUI
 {
-
 	using KEY_BINDER_STYLE = enum struct ESKeybinderStyle_t : int
 	{
 		CLICK = 0,
@@ -60,7 +62,7 @@ namespace FGUI
 		}
 
 	private:
-		unsigned* m_uBound;
+		unsigned* m_uBound {nullptr};
 		int m_nStyle;
 		unsigned int m_uiKey;
 		std::string m_strStatus;

@@ -10,8 +10,12 @@
 #include <iomanip>
 
 // library includes
+#include <chrono>
+
 #include "widgets.hpp"
 #include "theme.h"
+
+using namespace std::chrono;
 
 namespace FGUI
 {
@@ -20,6 +24,7 @@ namespace FGUI
 	constexpr auto RAINBOW_SIZE = 2;
 	constexpr auto INNER_PAD = 14;
 	constexpr auto CLOSE_BUTTON_RADIUS = (TITLE_HEIGHT / 2) - 4;
+	constexpr auto MENU_FADE_DURATION = 200.f;
 	
 	// Rainbow Settings
 	constexpr float rainbowSpeed = 0.001;
@@ -175,6 +180,12 @@ namespace FGUI
 		void Cursor();
 
 	private:
+
+		// Container settings
+		float m_flAlpha = 255.f;
+		time_point<high_resolution_clock> last_time = high_resolution_clock::now();
+		bool fading_out = true;
+		
 		bool m_draggable{ true };
 		bool m_bIsOpened;
 		std::string m_strConfigName;
