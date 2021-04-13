@@ -124,30 +124,32 @@ namespace FGUI
 
 				// change slider value
 				m_flValue = m_rngBoundaries.m_flMin + (m_rngBoundaries.m_flMax - m_rngBoundaries.m_flMin) * flRatio;
-
-				// Update our bound data
-				if (m_eBindType == WIDGET_BIND_TYPE::FLOAT) {
-					*static_cast<float*>(m_pvBoundData) = m_flValue;
-				}
-				else if (m_eBindType == WIDGET_BIND_TYPE::INT) {
-					m_flValue = round(m_flValue);
-
-					if (m_flValue > m_rngBoundaries.m_flMax) {
-						m_flValue = m_rngBoundaries.m_flMax;
-					}
-
-					if (m_flValue < m_rngBoundaries.m_flMin) {
-						m_flValue = m_rngBoundaries.m_flMin;
-					}
-					
-					*static_cast<int*>(m_pvBoundData) = static_cast<int>(m_flValue);
-				}
 			}
 			else
 			{
 				m_bIsDragging = false;
 			}
 		}
+
+		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+		if (INPUT.IsCursorInArea(arWidgetRegion)) {
+			const auto scroll = INPUT.GetScroll();
+			if (scroll != 0) {
+				m_flValue += ((m_rngBoundaries.m_flMin + (m_rngBoundaries.m_flMax - m_rngBoundaries.m_flMin)) / 100) * -scroll;
+			}
+		}
+		
+		// Update our bound data
+		if (m_eBindType == WIDGET_BIND_TYPE::FLOAT) {
+			*static_cast<float*>(m_pvBoundData) = m_flValue;
+		}
+		else if (m_eBindType == WIDGET_BIND_TYPE::INT) {
+			m_flValue = round(m_flValue);
+
+			*static_cast<int*>(m_pvBoundData) = static_cast<int>(m_flValue);
+		}
+
+		m_flValue = std::clamp(m_flValue, m_rngBoundaries.m_flMin, m_rngBoundaries.m_flMax);
 
 		// stop slider if another widget is being focused
 		if (std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->GetFocusedWidget())
