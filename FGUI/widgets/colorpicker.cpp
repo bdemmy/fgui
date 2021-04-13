@@ -51,8 +51,8 @@ namespace FGUI
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
 		// color picker button body
-		FGUI::RENDER.Outline((arWidgetRegion.m_iLeft), (arWidgetRegion.m_iTop), m_dmSize.m_iWidth, (m_dmSize.m_iHeight), borderColor);
-		FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft) + 1, (arWidgetRegion.m_iTop + 1), (m_dmSize.m_iWidth - 2), (m_dmSize.m_iHeight - 2), bg);
+		FGUI::RENDER.Outline((arWidgetRegion.m_iLeft), (arWidgetRegion.m_iTop), m_dmSize.m_iWidth, (m_dmSize.m_iHeight), COLOR_CCOLORPICKER_BORDER);
+		FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft) + 1, (arWidgetRegion.m_iTop + 1), (m_dmSize.m_iWidth - 2), (m_dmSize.m_iHeight - 2), COLOR_CCOLORPICKER_BG);
 		FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft) + 1, (arWidgetRegion.m_iTop + 1), (m_dmSize.m_iWidth - 2), (m_dmSize.m_iHeight - 2), m_clrDefault);
 
 		if (m_bIsOpened)
@@ -62,8 +62,8 @@ namespace FGUI
 			FGUI::AREA arOuterRegion = { GetAbsolutePosition().m_iX + 15 - 5, GetAbsolutePosition().m_iY, dmColorPickerSize.m_iWidth + 10 + 40, dmColorPickerSize.m_iHeight + 10 };
 			FGUI::AREA arColorPickerRegion = { (arWidgetRegion.m_iLeft + 15), arWidgetRegion.m_iTop+5, dmColorPickerSize.m_iWidth, dmColorPickerSize.m_iHeight };
 
-			FGUI::RENDER.Rectangle(arOuterRegion.m_iLeft, arOuterRegion.m_iTop, arOuterRegion.m_iRight, arOuterRegion.m_iBottom, borderColor);
-			FGUI::RENDER.Rectangle(arOuterRegion.m_iLeft+1, arOuterRegion.m_iTop+1, arOuterRegion.m_iRight-2, arOuterRegion.m_iBottom-2, bg);
+			FGUI::RENDER.Rectangle(arOuterRegion.m_iLeft, arOuterRegion.m_iTop, arOuterRegion.m_iRight, arOuterRegion.m_iBottom, COLOR_CCOLORPICKER_BORDER);
+			FGUI::RENDER.Rectangle(arOuterRegion.m_iLeft+1, arOuterRegion.m_iTop+1, arOuterRegion.m_iRight-2, arOuterRegion.m_iBottom-2, COLOR_CCOLORPICKER_BG);
 			
 			// color picker body
 			//FGUI::RENDER.Rectangle(arColorPickerRegion.m_iLeft, arColorPickerRegion.m_iTop, arColorPickerRegion.m_iRight, arColorPickerRegion.m_iBottom, { 100, 100, 100 });
@@ -95,16 +95,16 @@ namespace FGUI
 			const int iClampedRelativePosY = std::clamp(static_cast<int>(m_prRelativePos.m_flY), 0, std::max(5, (arColorPickerRegion.m_iBottom - 4)));
 
 			// color hsb body
-			FGUI::RENDER.Outline((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 1, (arColorPickerRegion.m_iTop + 1), 1, arColorPickerRegion.m_iBottom + 2, borderColor);
+			FGUI::RENDER.Outline((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 1, (arColorPickerRegion.m_iTop + 1), 1, arColorPickerRegion.m_iBottom + 2, COLOR_CCOLORPICKER_BORDER);
 			FGUI::RENDER.Rectangle((arColorPickerRegion.m_iLeft + iClampedRelativePosX), (arColorPickerRegion.m_iTop + iClampedRelativePosY), 5, 5, { 35, 35, 35 });
 
 			// hue bar body
-			FGUI::RENDER.Rectangle(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 5), arColorPickerRegion.m_iTop + (arColorPickerRegion.m_iBottom * FGUI::COLOR::GetHue(m_clrDefault)), 3, 3, bgLabelColor);
-			FGUI::RENDER.Outline(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10) - 1, arColorPickerRegion.m_iTop - 1, (10 + 2), arColorPickerRegion.m_iBottom + 2, borderColor);
+			FGUI::RENDER.Rectangle(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 5), arColorPickerRegion.m_iTop + (arColorPickerRegion.m_iBottom * FGUI::COLOR::GetHue(m_clrDefault)), 3, 3, COLOR_CCOLORPICKER_LABEL);
+			FGUI::RENDER.Outline(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 10) - 1, arColorPickerRegion.m_iTop - 1, (10 + 2), arColorPickerRegion.m_iBottom + 2, COLOR_CCOLORPICKER_BORDER);
 
 			// alpha bar body
-			FGUI::RENDER.Rectangle(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 25), arColorPickerRegion.m_iTop + (arColorPickerRegion.m_iBottom * (1-(m_clrDefault.m_ucAlpha / 255.f))), 3, 3, bgLabelColor);
-			FGUI::RENDER.Outline(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 30) - 1, arColorPickerRegion.m_iTop - 1, (10 + 2), arColorPickerRegion.m_iBottom + 2, borderColor);
+			FGUI::RENDER.Rectangle(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 25), arColorPickerRegion.m_iTop + (arColorPickerRegion.m_iBottom * (1-(m_clrDefault.m_ucAlpha / 255.f))), 3, 3, COLOR_CCOLORPICKER_LABEL);
+			FGUI::RENDER.Outline(((arColorPickerRegion.m_iLeft + arColorPickerRegion.m_iRight) + 30) - 1, arColorPickerRegion.m_iTop - 1, (10 + 2), arColorPickerRegion.m_iBottom + 2, COLOR_CCOLORPICKER_BORDER);
 
 			FGUI::AREA arOuterRegion2 = { GetAbsolutePosition().m_iX/* + 15 - 5*/, GetAbsolutePosition().m_iY, dmColorPickerSize.m_iWidth + 10 + 20 + 40, dmColorPickerSize.m_iHeight + 10 };
 			if (!FGUI::INPUT.IsCursorInArea(arOuterRegion2)) {

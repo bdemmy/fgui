@@ -47,10 +47,6 @@ namespace FGUI
 
 	void CTextBox::Geometry(FGUI::WIDGET_STATUS status)
 	{
-		FGUI::COLOR bg{ 25, 25, 25 }; // { 255, 255, 255 }
-		FGUI::COLOR borderColor{ 60, 60, 60 }; // { 220, 220, 200 }
-		FGUI::COLOR borderColorHover{ 115, 115, 115 }; // { 195, 195, 195 }
-		FGUI::COLOR bgLabelColor{ 220, 220, 220 }; // { 35, 35, 35 }
 
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 
@@ -61,36 +57,36 @@ namespace FGUI
 		if (status == FGUI::WIDGET_STATUS::HOVERED || m_bIsGettingKey)
 		{
 			if (m_bIsGettingKey) {
-				FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, { 255, 40, 40 });
+				FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, ACCENT);
 			}
 			else {
-				FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, borderColorHover);
+				FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, COLOR_CTEXTBOX_BORDER_HOVER);
 			}
-			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), bg);
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), COLOR_CTEXTBOX_BG);
 		}
 		else
 		{
-			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, borderColor);
-			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), bg);
+			FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, arWidgetRegion.m_iTop, arWidgetRegion.m_iRight, arWidgetRegion.m_iBottom, COLOR_CTEXTBOX_BORDER);
+			FGUI::RENDER.Rectangle((arWidgetRegion.m_iLeft + 1), (arWidgetRegion.m_iTop + 1), (arWidgetRegion.m_iRight - 2), (arWidgetRegion.m_iBottom - 2), COLOR_CTEXTBOX_BG);
 		}
 
 		// textbox label
-		FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, bgLabelColor, m_strTitle + ":");
+		FGUI::RENDER.Text((arWidgetRegion.m_iLeft + 10), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, COLOR_CTEXTBOX_LABEL, m_strTitle + ":");
 
 		// textbox typed text
 		if (m_nStyle == static_cast<int>(FGUI::TEXTBOX_STYLE::NORMAL))
 		{
-			FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, bgLabelColor, m_strCustomText);
+			FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, COLOR_CTEXTBOX_LABEL, m_strCustomText);
 		}
 		else if (m_nStyle == static_cast<int>(FGUI::TEXTBOX_STYLE::UPPERCASE))
 		{
 			std::transform(m_strCustomText.begin(), m_strCustomText.end(), m_strCustomText.begin(), ::toupper);
 
-			FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, bgLabelColor, m_strCustomText);
+			FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, COLOR_CTEXTBOX_LABEL, m_strCustomText);
 		}
 		else if (m_nStyle == static_cast<int>(FGUI::TEXTBOX_STYLE::PASSWORD))
 		{
-			FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, bgLabelColor, std::string(m_strCustomText.length(), '*'));
+			FGUI::RENDER.Text(arWidgetRegion.m_iLeft + (dmTitleTextSize.m_iWidth + 20), arWidgetRegion.m_iTop + (arWidgetRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, COLOR_CTEXTBOX_LABEL, std::string(m_strCustomText.length(), '*'));
 		}
 
 		if (m_bIsGettingKey && !m_bIsTextSelected)

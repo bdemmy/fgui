@@ -117,7 +117,7 @@ namespace FGUI
 
 		if (m_bIsOpened)
 		{
-			if (m_prgpEntries.first.size() > 14)
+			if (m_prgpEntries.first.size() > 7)
 			{
 				// dropdown list body
 				FGUI::RENDER.Outline(arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop + 21), arWidgetRegion.m_iRight, (10 * m_iEntrySpacing), COLOR_CCOMBOBOX_BORDER);
@@ -135,14 +135,16 @@ namespace FGUI
 					FGUI::AREA arEntryRegion = { arWidgetRegion.m_iLeft, (arWidgetRegion.m_iTop + 21) + (iEntriesDisplayed * m_iEntrySpacing), (arWidgetRegion.m_iRight - arScrollBarRegion.m_iRight), (m_iEntrySpacing - 2) };
 
 					// check if the user is hovering/have selected an entry
-					if (FGUI::INPUT.IsCursorInArea(arEntryRegion) || m_ullSelectedEntry == i)
-					{
-						FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 2, arEntryRegion.m_iTop, arEntryRegion.m_iRight - 4, arEntryRegion.m_iBottom, { 255, 40, 40 });
-						FGUI::RENDER.Text(arEntryRegion.m_iLeft + (arEntryRegion.m_iRight / 2) - (dmTitleTextSize.m_iWidth / 2), arEntryRegion.m_iTop + (arEntryRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, { 255, 255, 255 }, m_prgpEntries.first[i]);
+					if (FGUI::INPUT.IsCursorInArea(arEntryRegion)) {
+						FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 2, arEntryRegion.m_iTop, arEntryRegion.m_iRight - 4, arEntryRegion.m_iBottom, COLOR_CCOMBOBOX_BG_ITEM_HOVER);
+						FGUI::RENDER.Text(arEntryRegion.m_iLeft + (arEntryRegion.m_iRight / 2) - (dmTitleTextSize.m_iWidth / 2), arEntryRegion.m_iTop + (arEntryRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, COLOR_CCOMBOBOX_LABEL, m_prgpEntries.first[i]);
 					}
-					else
-					{
-						FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 1, (arEntryRegion.m_iTop + arEntryRegion.m_iBottom), arEntryRegion.m_iRight - 1, 1, COLOR_CCOMBOBOX_BG_ITEM_HOVER);
+					else if (m_ullSelectedEntry == i) {
+						FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 2, arEntryRegion.m_iTop, arEntryRegion.m_iRight - 4, arEntryRegion.m_iBottom, { 255, 40, 40 });
+						FGUI::RENDER.Text(arEntryRegion.m_iLeft + (arEntryRegion.m_iRight / 2) - (dmTitleTextSize.m_iWidth / 2), arEntryRegion.m_iTop + (arEntryRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, COLOR_CCOMBOBOX_LABEL, m_prgpEntries.first[i]);
+					}
+					else {
+						FGUI::RENDER.Rectangle(arEntryRegion.m_iLeft + 1, (arEntryRegion.m_iTop + arEntryRegion.m_iBottom), arEntryRegion.m_iRight - 1, 1, COLOR_CCOMBOBOX_BG);
 						FGUI::RENDER.Text(arEntryRegion.m_iLeft + (arEntryRegion.m_iRight / 2) - (dmTitleTextSize.m_iWidth / 2), arEntryRegion.m_iTop + (arEntryRegion.m_iBottom / 2) - (dmTitleTextSize.m_iHeight / 2), m_anyFont, COLOR_CCOMBOBOX_LABEL, m_prgpEntries.first[i]);
 					}
 
@@ -152,35 +154,29 @@ namespace FGUI
 				static constexpr FGUI::DIMENSION dmScrollBarThumb = { 8, 5 };
 
 				// calculate thumb position
-				float flCalculatedPosition = static_cast<float>(m_iScrollThumbPosition) / static_cast<float>(m_prgpEntries.first.size());
+				auto thumb_ratio = static_cast<float>(iCalculatedEntries) / static_cast<float>(m_prgpEntries.first.size());
+				thumb_ratio = std::min(thumb_ratio, 1.f);
+				const auto thumb_size = (m_dmSize.m_iHeight - m_iEntrySpacing - 6) * thumb_ratio;
 
-				if (flCalculatedPosition >= 1.f)
-				{
-					flCalculatedPosition = 1.f;
+				// calculate thumb position
+				const auto count_positions = m_prgpEntries.first.size() - iCalculatedEntries;
+				const auto segment_size = (m_dmSize.m_iHeight - m_iEntrySpacing - 6 - thumb_size) / count_positions;
+
+				auto flCalculatedPosition = segment_size * m_iScrollThumbPosition;
+				if (count_positions == 0) {
+					flCalculatedPosition = 0;
 				}
-
-				flCalculatedPosition *= (m_dmSize.m_iHeight - m_iEntrySpacing) - 10;
-
-				// calculate thumb size
-				float flCalculatedSize = static_cast<float>(iCalculatedEntries) / static_cast<float>(m_prgpEntries.first.size());
-
-				if (flCalculatedSize > 1.f)
-				{
-					flCalculatedSize = 1.f;
-				}
-
-				flCalculatedSize *= (m_dmSize.m_iHeight - m_iEntrySpacing);
 
 				// scrollbar body
 				FGUI::RENDER.Rectangle(arScrollBarRegion.m_iLeft, (arScrollBarRegion.m_iTop + 1), (arScrollBarRegion.m_iRight - 1), (arScrollBarRegion.m_iBottom - 3), COLOR_CCOMBOBOX_BG_HOVER);
 
 				if (m_prgpEntries.first.size() > 50)
 				{
-					FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 3), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 5, dmScrollBarThumb.m_iWidth, dmScrollBarThumb.m_iHeight, COLOR_CCOMBOBOX_BORDER);
+					FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 3), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 3, dmScrollBarThumb.m_iWidth, dmScrollBarThumb.m_iHeight, COLOR_CLISTBOX_SCROLL);
 				}
 				else
 				{
-					FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 3), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 5, dmScrollBarThumb.m_iWidth, (flCalculatedSize - 10), COLOR_CCOMBOBOX_BORDER);
+					FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 3), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 3, dmScrollBarThumb.m_iWidth, thumb_size, COLOR_CLISTBOX_SCROLL);
 				}
 			}
 			else
@@ -228,7 +224,7 @@ namespace FGUI
 			// keep widget focused
 			std::reinterpret_pointer_cast<FGUI::CContainer>(GetParentWidget())->SetFocusedWidget(shared_from_this());
 
-			if (m_prgpEntries.first.size() > 14)
+			if (m_prgpEntries.first.size() > 7)
 			{
 				m_dmSize.m_iHeight = m_iEntrySpacing + (10 * m_iEntrySpacing) + 1;
 			}
@@ -243,13 +239,21 @@ namespace FGUI
 			m_dmSize.m_iHeight = m_iCustomHeight;
 		}
 
-		if (m_prgpEntries.first.size() > 14)
+		if (m_prgpEntries.first.size() > 7)
 		{
+			// calculate the amount of entries that will be drawn on the dropdown list
+			const int iCalculatedEntries = (m_dmSize.m_iHeight - m_iEntrySpacing) / m_iEntrySpacing;
+			const int count_positions = m_prgpEntries.first.size() - iCalculatedEntries;
+
+			const auto scroll = FGUI::INPUT.GetScroll();
+			if (scroll != 0) {
+				m_iScrollThumbPosition += scroll;
+
+				m_iScrollThumbPosition = std::clamp(m_iScrollThumbPosition, 0, count_positions);
+			}
+			
 			if (m_bIsDraggingThumb)
 			{
-				// calculate the amount of entries that will be drawn on the dropdown list
-				int iCalculatedEntries = (m_dmSize.m_iHeight - m_iEntrySpacing) / m_iEntrySpacing;
-
 				FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
 				if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
@@ -321,7 +325,7 @@ namespace FGUI
 			{
 				FGUI::AREA arEntryRegion = { 0, 0, 0, 0 };
 
-				if (m_prgpEntries.first.size() > 14)
+				if (m_prgpEntries.first.size() > 7)
 				{
 					if (FGUI::INPUT.IsCursorInArea(arScrollBarRegion))
 					{

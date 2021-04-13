@@ -14,6 +14,7 @@ namespace FGUI_INPUT_WIN32
     inline std::array<bool, 256> m_prgpCurrentPressedKeys, m_prgpOldPressedKeys;
     inline FGUI::POINT m_ptCursorPosition, m_ptCursorPositionDelta;
     inline HWND m_hwnd;
+    inline int scroll = 0;
 
     inline void PullInput()
     {
@@ -83,6 +84,14 @@ namespace FGUI_INPUT_WIN32
             GetCursorPos().m_iX < area.m_iLeft + area.m_iRight && GetCursorPos().m_iY < area.m_iTop + area.m_iBottom);
     }
 
+	inline void SetScroll(int iScroll) {
+        scroll = iScroll;
+    }
+
+	inline int GetScroll() {
+        return scroll;
+    }
+
     // NOTE: call this function only once (preferably when you initialize your application)
     inline void OnEntryPoint(LPDIRECT3DDEVICE9 device)
     {
@@ -93,6 +102,8 @@ namespace FGUI_INPUT_WIN32
         FGUI::INPUT.GetCursorPos = FGUI_INPUT_WIN32::GetCursorPos;
         FGUI::INPUT.GetCursorPosDelta = FGUI_INPUT_WIN32::GetCursorPosDelta;
         FGUI::INPUT.IsCursorInArea = FGUI_INPUT_WIN32::IsCursorInArea;
+        FGUI::INPUT.SetScroll = FGUI_INPUT_WIN32::SetScroll;
+        FGUI::INPUT.GetScroll = FGUI_INPUT_WIN32::GetScroll;
         
         // set input type
         FGUI::INPUT.SetInputType(FGUI::INPUT_TYPE::WIN_32);

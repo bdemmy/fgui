@@ -109,37 +109,31 @@ namespace FGUI
 		}
 
 		static constexpr FGUI::DIMENSION dmScrollBarThumb = { 8, 5 };
+		
+		// calculate thumb size
+		auto thumb_ratio = static_cast<float>(iCalculatedEntries) / static_cast<float>(m_prgpEntries.first.size());
+		thumb_ratio = std::min(thumb_ratio, 1.f);
+		const auto thumb_size = (m_dmSize.m_iHeight - 6) * thumb_ratio;
 
 		// calculate thumb position
-		float flCalculatedPosition = static_cast<float>(m_iScrollThumbPosition) / static_cast<float>(m_prgpEntries.first.size());
-
-		if (flCalculatedPosition >= 1.f)
-		{
-			flCalculatedPosition = 1.f;
+		const auto count_positions = m_prgpEntries.first.size() - iCalculatedEntries;
+		const auto segment_size = (m_dmSize.m_iHeight - 6 - thumb_size) / count_positions;
+		
+		auto flCalculatedPosition = segment_size * m_iScrollThumbPosition;
+		if (count_positions == 0) {
+			flCalculatedPosition = 0;
 		}
-
-		flCalculatedPosition *= (m_dmSize.m_iHeight - m_iEntrySpacing) - 10;
-
-		// calculate thumb size
-		float flCalculatedSize = static_cast<float>(iCalculatedEntries) / static_cast<float>(m_prgpEntries.first.size());
-
-		if (flCalculatedSize > 1.f)
-		{
-			flCalculatedSize = 1.f;
-		}
-
-		flCalculatedSize *= (m_dmSize.m_iHeight - m_iEntrySpacing);
 
 		// scrollbar body
 		FGUI::RENDER.Rectangle(arScrollBarRegion.m_iLeft, arScrollBarRegion.m_iTop, arScrollBarRegion.m_iRight, arScrollBarRegion.m_iBottom, COLOR_CLISTBOX_BORDER);
 
 		if (m_prgpEntries.first.size() > 50)
 		{
-			FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 3), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 4, dmScrollBarThumb.m_iWidth + 1, dmScrollBarThumb.m_iHeight, COLOR_CLISTBOX_SCROLL);
+			FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 3), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 3, dmScrollBarThumb.m_iWidth + 1, dmScrollBarThumb.m_iHeight, COLOR_CLISTBOX_SCROLL);
 		}
 		else
 		{
-			FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 3), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 4, dmScrollBarThumb.m_iWidth + 1, flCalculatedSize, COLOR_CLISTBOX_SCROLL);
+			FGUI::RENDER.Rectangle((arScrollBarRegion.m_iLeft + 3), (arScrollBarRegion.m_iTop + flCalculatedPosition) + 3, dmScrollBarThumb.m_iWidth + 1, thumb_size, COLOR_CLISTBOX_SCROLL);
 		}
 
 		IGNORE_ARGS(status);
@@ -147,11 +141,22 @@ namespace FGUI
 
 	void CListBox::Update()
 	{
+		// calculate the amount of entries that will be drawn on the listbox
+		int iCalculatedEntries = (m_dmSize.m_iHeight / m_iEntrySpacing);
+		const int count_positions = m_prgpEntries.first.size() - iCalculatedEntries;
+
+		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
+		if (FGUI::INPUT.IsCursorInArea(arWidgetRegion)) {
+			const auto scroll = FGUI::INPUT.GetScroll();
+			if (scroll != 0) {
+				m_iScrollThumbPosition += scroll;
+
+				m_iScrollThumbPosition = std::clamp(m_iScrollThumbPosition, 0, count_positions);
+			}
+		}
+
 		if (m_bIsDraggingThumb)
 		{
-			// calculate the amount of entries that will be drawn on the listbox
-			int iCalculatedEntries = (m_dmSize.m_iHeight / m_iEntrySpacing);
-
 			FGUI::POINT ptCursorPos = FGUI::INPUT.GetCursorPos();
 
 			if (FGUI::INPUT.IsKeyHeld(MOUSE_1))
