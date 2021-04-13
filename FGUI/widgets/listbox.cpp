@@ -148,10 +148,12 @@ namespace FGUI
 		FGUI::AREA arWidgetRegion = { GetAbsolutePosition().m_iX, GetAbsolutePosition().m_iY, m_dmSize.m_iWidth, m_dmSize.m_iHeight };
 		if (FGUI::INPUT.IsCursorInArea(arWidgetRegion)) {
 			const auto scroll = FGUI::INPUT.GetScroll();
-			if (scroll != 0) {
+			if (scroll != 0 && count_positions != 0) {
 				m_iScrollThumbPosition += scroll;
 
 				m_iScrollThumbPosition = std::clamp(m_iScrollThumbPosition, 0, count_positions);
+
+				INPUT.SetScroll(0);
 			}
 		}
 

@@ -246,10 +246,12 @@ namespace FGUI
 			const int count_positions = m_prgpEntries.first.size() - iCalculatedEntries;
 
 			const auto scroll = FGUI::INPUT.GetScroll();
-			if (scroll != 0) {
+			if (scroll != 0 && count_positions != 0) {
 				m_iScrollThumbPosition += scroll;
 
 				m_iScrollThumbPosition = std::clamp(m_iScrollThumbPosition, 0, count_positions);
+
+				INPUT.SetScroll(0);
 			}
 			
 			if (m_bIsDraggingThumb)
